@@ -176,6 +176,11 @@
         <translation>Наименование</translation>
     </message>
     <message>
+        <location filename="mainwindow.cpp" line="25"/>
+        <source>Name sector</source>
+        <translation>Наименование сектора</translation>
+    </message>
+    <message>
         <location filename="mainwindow.cpp" line="32"/>
         <source>Export</source>
         <translation>Экспорт</translation>
