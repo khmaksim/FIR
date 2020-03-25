@@ -53,43 +53,46 @@ void DatabaseAccess::readSettings()
     settings.endGroup();
 }
 
-QVector<QVariantList> DatabaseAccess::getZones()
+QVector<Record> DatabaseAccess::getZones()
 {
     QSqlQuery query(db);
-    QVector<QVariantList> zones = QVector<QVariantList>();
+    QVector<Record> zones = QVector<Record>();
 
-    query.exec("SELECT cn.id_arpt, cn.name FROM ctr_name cn, ctr_point cp "
-               "WHERE cn.id_arpt = cp.id GROUP BY cn.id_arpt, cn.name "
-               "ORDER BY cn.name");
+    query.exec("SELECT fn.id, fn.name_rus, fn.name_russec FROM FIR_name fn "
+               "ORDER BY fn.name_rus, fn.name_russec");
+
     while (query.next()) {
-        QSqlRecord record = query.record();
-        QVariantList list = QVariantList();
-        for (int i = 0; i < record.count(); i++)
-            list.append(record.value(i));
-
-        zones.append(list);
+        Record record;
+        QSqlRecord sqlRecord = query.record();
+        int col = 0;
+        while (col < sqlRecord.count()){
+            record.insert(col, query.value(col));
+            col++;
+        }
+        zones.append(record);
     }
     return zones;
 }
 
-QVector<QVariantList> DatabaseAccess::getPoints(int id)
+QVector<Record> DatabaseAccess::getPoints(int id)
 {
     QSqlQuery query(db);
-    QVector<QVariantList> points = QVector<QVariantList>();
-    qDebug() << id;
+    QVector<Record> points = QVector<Record>();
 
-    query.prepare("SELECT lat, lon FROM ctr_point WHERE id = ?");
+    query.prepare("SELECT LAT, LON FROM FIR_To4ki WHERE id = ?");
     query.addBindValue(id);
     if (!query.exec())
         qDebug() << query.lastError().text() << query.lastQuery() << query.boundValues();
 
     while (query.next()) {
-        QSqlRecord record = query.record();
-        QVariantList list = QVariantList();
-        for (int i = 0; i < record.count(); i++)
-            list.append(record.value(i));
-
-        points.append(list);
+        Record record;
+        QSqlRecord sqlRecord = query.record();
+        int col = 0;
+        while (col < sqlRecord.count()){
+            record.insert(col, query.value(col));
+            col++;
+        }
+        points.append(record);
     }
 
     return points;

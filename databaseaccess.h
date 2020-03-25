@@ -3,15 +3,19 @@
 
 #include <QObject>
 #include <QSqlDatabase>
+#include <QMap>
+#include <QVariant>
 
+typedef QMap<int, QVariant> Record;
 class DatabaseAccess : public QObject
 {
+
         Q_OBJECT
     public:
         static DatabaseAccess* getInstance();
 
-        QVector<QVariantList> getZones();
-        QVector<QVariantList> getPoints(int id);
+        QVector<Record> getZones();
+        QVector<Record> getPoints(int id);
         int insertAirfield(const QString&, const QString&);
         void insertObstracle(int idAirfield, QMap<QString, QString> obstracle);
         bool removeAirfield(int idAirfield);

@@ -22,7 +22,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     model = new QStandardItemModel(this);
-    model->setHorizontalHeaderLabels(QStringList() << tr("*") << tr("Name"));
+    model->setHorizontalHeaderLabels(QStringList() << tr("*") << tr("Name") << tr("Name sector"));
 
     mapView = nullptr;
     toolBar = addToolBar(QString());
@@ -81,22 +81,22 @@ void MainWindow::updateZoneTable()
         model->removeRow(0);
     }
 
-    QVector<QVariantList> zones = DatabaseAccess::getInstance()->getZones();
+    QVector<Record> zones = DatabaseAccess::getInstance()->getZones();
     // uncheked header
 //    qobject_cast<QGroupHeaderView*>(ui->tableView->horizontalHeader())->setChecked(false);
 
     for (int i = 0; i < zones.size(); i++) {
         QList<QStandardItem *> items;
-        QVariantList fields = zones.at(i);
+        Record record = zones.at(i);
 
         QStandardItem *item = new QStandardItem();
-        item->setData(fields.takeFirst().toUInt(), Qt::UserRole + 1);      // set tags for obstracles to first column
+        item->setData(record.first().toUInt(), Qt::UserRole + 1);      // set tags for obstracles to first column
 //        item->setData(fields.takeLast().toString(), Qt::UserRole + 1);      // set tags for obstracles to first column
 //        item->setData(fields.takeLast().toString(), Qt::UserRole + 2);      // set datetime last updated
         items.append(item);
         // get name type obstracles
-        for (int j = 0; j < fields.size(); j++) {
-            items.append(new QStandardItem(fields.at(j).toString()));
+        for (int j = 1; j < record.size(); j++) {
+            items.append(new QStandardItem(record.value(j).toString()));
         }
         model->appendRow(items);
     }
@@ -155,9 +155,9 @@ void MainWindow::showZones()//QVariant coordinate, QVariant radius)
     bool setCenterMap = false;
     for (int row = 0; row < model->rowCount(); row++) {
         if (model->index(row, 0).data(Qt::CheckStateRole).toBool()) {
-            QVector<QVariantList> points = DatabaseAccess::getInstance()->getPoints(model->index(row, 0).data(Qt::UserRole + 1).toInt());
+            QVector<Record> points = DatabaseAccess::getInstance()->getPoints(model->index(row, 0).data(Qt::UserRole + 1).toInt());
 
-            QVector<QVariantList>::iterator it;
+            QVector<Record>::iterator it;
             QList<QVariant> listPoint;
             for (it = points.begin(); it != points.end(); ++it) {
                 double lat = Helper::convertCoordinateInDec(it->first().toString());
@@ -194,7 +194,7 @@ void MainWindow::showSettings()
 
 void MainWindow::exportToFile()
 {
-    QString nameFile = QFileDialog::getSaveFileName(this, tr("Save file"), QString("D:/prep.txt"));
+    QString nameFile = QFileDialog::getSaveFileName(this, tr("Save file"), QString("D:/fir.txt"));
     if (nameFile.isEmpty()) {
         qDebug() << "Empty name save file";
         return;
@@ -210,9 +210,9 @@ void MainWindow::exportToFile()
     QTextStream out(&file);
     for (int row = 0; row < model->rowCount(); row++) {
         if (model->index(row, 0).data(Qt::CheckStateRole).toBool()) {
-            QVector<QVariantList> points = DatabaseAccess::getInstance()->getPoints(model->index(row, 0).data(Qt::UserRole + 1).toInt());
+            QVector<Record> points = DatabaseAccess::getInstance()->getPoints(model->index(row, 0).data(Qt::UserRole + 1).toInt());
 
-            QVector<QVariantList>::iterator it;
+            QVector<Record>::iterator it;
             QList<QVariant> listPoint;
             for (it = points.begin(); it != points.end(); ++it) {
                 out << it->first().toString().replace("с", "N").replace("ю", "S").remove(QRegExp("[\\s\\.]")).append("0") << endl;
