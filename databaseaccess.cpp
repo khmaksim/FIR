@@ -58,7 +58,7 @@ QVector<Record> DatabaseAccess::getZones()
     QSqlQuery query(db);
     QVector<Record> zones = QVector<Record>();
 
-    query.exec("SELECT fn.id, fn.name_rus, fn.name_russec FROM FIR_name fn "
+    query.exec("SELECT fn.id, fn.name_rus, fn.name_russec, fn.idangl, call, func, freq FROM FIR_name fn "
                "ORDER BY fn.name_rus, fn.name_russec");
 
     while (query.next()) {
@@ -79,7 +79,7 @@ QVector<Record> DatabaseAccess::getPoints(int id)
     QSqlQuery query(db);
     QVector<Record> points = QVector<Record>();
 
-    query.prepare("SELECT LAT, LON FROM FIR_To4ki WHERE id = ?");
+    query.prepare("SELECT LAT, LON FROM FIR_To4ki WHERE id = ? ORDER BY seqnum");
     query.addBindValue(id);
     if (!query.exec())
         qDebug() << query.lastError().text() << query.lastQuery() << query.boundValues();
