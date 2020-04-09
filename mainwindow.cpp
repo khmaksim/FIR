@@ -10,10 +10,13 @@
 #include <QStandardItemModel>
 #include <QFileDialog>
 #include <QSaveFile>
+#include <QLineEdit>
+#include <QSortFilterProxyModel>
 #include "checkboxitemdelegate.h"
 #include "mapview.h"
 #include "helper.h"
 #include "settingsdialog.h"
+#include "model/sortsearchfilterobstraclemodel.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -45,13 +48,24 @@ MainWindow::MainWindow(QWidget *parent) :
     settingsButton->setIcon(QIcon(":/images/res/img/icons8-settings-48.png"));
     settingsButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
 
+    QLineEdit *searchLine = new QLineEdit(this);
+    searchLine->setPlaceholderText(tr("Search..."));
+    searchLine->setClearButtonEnabled(true);
+
+    QWidget *spacer = new QWidget(this);
+    spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+
     toolBar->addWidget(exportButton);
     toolBar->addWidget(displayOnMapButton);
     toolBar->addWidget(settingsButton);
+    toolBar->addSeparator();
+    toolBar->addWidget(searchLine);
+    toolBar->addWidget(spacer);
 
-//    sortSearchFilterModel = new SortSearchFilterObstracleModel(this);
-//    sortSearchFilterObstracleModel->setSourceModel(obstraclesModel);
-    ui->tableView->setModel(model);
+    SortSearchFilterObstracleModel *sortSearchFilterObstracleModel = new SortSearchFilterObstracleModel(this);
+    sortSearchFilterObstracleModel->setSourceModel(model);
+
+    ui->tableView->setModel(sortSearchFilterObstracleModel);
     ui->tableView->setItemDelegateForColumn(0, new CheckboxItemDelegate(this));
 //    ObstraclesForm *form = new ObstraclesForm(this);
 //    ui->stackedWidget->addWidget(form);
@@ -62,6 +76,7 @@ MainWindow::MainWindow(QWidget *parent) :
     readSettings();
     updateZoneTable();
 
+    connect(searchLine, SIGNAL(textChanged(const QString&)), sortSearchFilterObstracleModel, SLOT(setFilterRegExp(QString)));
     connect(model, SIGNAL(dataChanged(QModelIndex,QModelIndex,QVector<int>)), this, SLOT(enabledToolButton()));
     connect(exportButton, SIGNAL(clicked(bool)), this, SLOT(exportToFile()));
     connect(displayOnMapButton, SIGNAL(clicked(bool)), this, SLOT(showZones()));
@@ -113,6 +128,7 @@ void MainWindow::writeSettings()
 
     settings.beginGroup("geometry");
     settings.setValue("maximized", this->isMaximized());
+    settings.setValue(ui->tableView->objectName(), ui->tableView->horizontalHeader()->saveState());
     settings.endGroup();
 }
 
@@ -123,6 +139,7 @@ void MainWindow::readSettings()
     settings.beginGroup("geometry");
     if (settings.value("maximized").toBool())
         this->showMaximized();
+    ui->tableView->horizontalHeader()->restoreState(settings.value(ui->tableView->objectName()).toByteArray());
     settings.endGroup();
     settings.beginGroup("database");
     settings.endGroup();
