@@ -235,12 +235,22 @@ void MainWindow::exportToFile()
         if (model->index(row, 0).data(Qt::CheckStateRole).toBool()) {
             QVector<Record> points = DatabaseAccess::getInstance()->getPoints(model->index(row, 0).data(Qt::UserRole + 1).toInt());
 
+            out << model->index(row, 1).data().toString().toUpper() << " " << model->index(row, 3).data().toString() << endl;      // name zone and code ICAO
+            out << model->index(row, 2).data().toString().append(")").prepend("(") << endl;      // name sector
+            out << model->index(row, 4).data().toString()
+                << " - "
+                << model->index(row, 5).data().toString()
+                << " "
+                << model->index(row, 6).data().toString()
+                << endl;      // call, func, freq
+
             QVector<Record>::iterator it;
             QList<QVariant> listPoint;
             for (it = points.begin(); it != points.end(); ++it) {
                 out << it->first().toString().replace("с", "N").replace("ю", "S").remove(QRegExp("[\\s\\.]")).append("0") << endl;
                 out << it->last().toString().replace("в", "E").replace("з", "W").remove(QRegExp("[\\s\\.]")).append("0") << endl;
             }
+            out << "1" << endl;
         }
     }
     file.commit();
