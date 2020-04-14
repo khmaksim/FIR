@@ -25,7 +25,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     model = new QStandardItemModel(this);
-    model->setHorizontalHeaderLabels(QStringList() << tr("*") << tr("Name") << tr("Name sector"));
+    model->setHorizontalHeaderLabels(QStringList() << tr("*") << tr("Name") << tr("Name sector") << tr("") << tr("") << tr("") << tr(""));
 
     mapView = nullptr;
     toolBar = addToolBar(QString());
@@ -128,7 +128,7 @@ void MainWindow::writeSettings()
 
     settings.beginGroup("geometry");
     settings.setValue("maximized", this->isMaximized());
-    settings.setValue(ui->tableView->objectName(), ui->tableView->horizontalHeader()->saveState());
+    settings.setValue(ui->tableView->objectName(), ui->tableView->horizontalHeader()->saveGeometry());
     settings.endGroup();
 }
 
@@ -139,7 +139,7 @@ void MainWindow::readSettings()
     settings.beginGroup("geometry");
     if (settings.value("maximized").toBool())
         this->showMaximized();
-    ui->tableView->horizontalHeader()->restoreState(settings.value(ui->tableView->objectName()).toByteArray());
+    ui->tableView->horizontalHeader()->restoreGeometry(settings.value(ui->tableView->objectName()).toByteArray());
     settings.endGroup();
     settings.beginGroup("database");
     settings.endGroup();
@@ -187,9 +187,15 @@ void MainWindow::showZones()//QVariant coordinate, QVariant radius)
 
                 listPoint << QVariant(QPointF(lat, lon));
             }
-            mapView->addZone(listPoint);
+            QMap<QString, QString> args;
+            args.insert("nameZone", model->index(row, 1).data().toString());
+            args.insert("nameSector", model->index(row, 2).data().toString());
+            args.insert("codeIcao", model->index(row, 3).data().toString());
+            args.insert("call", model->index(row, 4).data().toString());
+            args.insert("func", model->index(row, 5).data().toString());
+            args.insert("freq", model->index(row, 6).data().toString());
 
-
+            mapView->displayZone(listPoint, args);
         }
     }
 //    setCheckedAllRowTable();

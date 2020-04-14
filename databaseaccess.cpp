@@ -58,7 +58,7 @@ QVector<Record> DatabaseAccess::getZones()
     QSqlQuery query(db);
     QVector<Record> zones = QVector<Record>();
 
-    query.exec("SELECT fn.id, fn.name_rus, fn.name_russec, fn.idangl, call, func, freq FROM FIR_name fn "
+    query.exec("SELECT fn.id, fn.name_rus, fn.name_russec, fn.idangl, call, func, freq, func2, freq2, ALTc2, ALTa2 FROM FIR_name fn "
                "ORDER BY fn.name_rus, fn.name_russec");
 
     while (query.next()) {

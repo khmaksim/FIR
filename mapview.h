@@ -5,15 +5,15 @@
 #include <QtQuick/QQuickView>
 #include <QVector>
 
-struct ObstraclePoint {
-        enum TypeObstraction { NATURAL, ARTIFICIAL, ARTIFICIAL_MARKING, GROUP, KTA };
+//struct ObstraclePoint {
+//        enum TypeObstraction { NATURAL, ARTIFICIAL, ARTIFICIAL_MARKING, GROUP, KTA };
 
-        QString id;
-        double lat;
-        double lon;
-        QString height;
-        TypeObstraction type;
-};
+//        QString id;
+//        double lat;
+//        double lon;
+//        QString height;
+//        TypeObstraction type;
+//};
 
 class MapView : public QQuickView
 {
@@ -26,11 +26,11 @@ class MapView : public QQuickView
         void setRadius(QVariant);
         void clearMap();
         void setCenter(QVariant);
-        void addObstracle(ObstraclePoint);
-        void addZone(QList<QVariant>);
+//        void addObstracle(ObstraclePoint);
+        void displayZone(QList<QVariant> path, const QMap<QString, QString> &args);
 
-    signals:
-        void checked(bool, QString);
+//    signals:
+//        void checked(bool, QString);
 };
 
 #endif // MAPVIEW_H

@@ -31,22 +31,24 @@ void MapView::setCenter(QVariant coordinate)
                               Q_ARG(QVariant, QVariant(lon)));
 }
 
-void MapView::addObstracle(ObstraclePoint obstracle)
-{
-    QMetaObject::invokeMethod(rootObject(), "addMarker", Qt::DirectConnection,
-                              Q_ARG(QVariant, QVariant(obstracle.lat)),
-                              Q_ARG(QVariant, QVariant(obstracle.lon)),
-                              Q_ARG(QVariant, QVariant(obstracle.height)),
-                              Q_ARG(QVariant, QVariant(obstracle.type)),
-                              Q_ARG(QVariant, QVariant(obstracle.id)));
-}
-
-void MapView::addZone(QList<QVariant> path)
-{
-    QMetaObject::invokeMethod(rootObject(), "addZone", Qt::DirectConnection,
-                              Q_ARG(QVariant, QVariant(path)));
+//void MapView::addObstracle(ObstraclePoint obstracle)
+//{
+//    QMetaObject::invokeMethod(rootObject(), "addMarker", Qt::DirectConnection,
+//                              Q_ARG(QVariant, QVariant(obstracle.lat)),
 //                              Q_ARG(QVariant, QVariant(obstracle.lon)),
 //                              Q_ARG(QVariant, QVariant(obstracle.height)),
 //                              Q_ARG(QVariant, QVariant(obstracle.type)),
 //                              Q_ARG(QVariant, QVariant(obstracle.id)));
+//}
+
+void MapView::displayZone(QList<QVariant> path, const QMap<QString, QString> &args)
+{
+    QMetaObject::invokeMethod(rootObject(), "displayZone", Qt::DirectConnection,
+                              Q_ARG(QVariant, QVariant(path)),
+                              Q_ARG(QVariant, QVariant(args.value("nameZone"))),
+                              Q_ARG(QVariant, QVariant(args.value("codeIcao"))),
+                              Q_ARG(QVariant, QVariant(args.value("nameSector"))),
+                              Q_ARG(QVariant, QVariant(args.value("call"))),
+                              Q_ARG(QVariant, QVariant(args.value("func"))),
+                              Q_ARG(QVariant, QVariant(args.value("freq"))));
 }

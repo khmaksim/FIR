@@ -173,74 +173,91 @@ Item {
         mapMapboxView.center = QtPositioning.coordinate(lat, lon);
     }
 
-    function addZone(path) {
-        var zone = Qt.createQmlObject('import QtLocation 5.13; MapPolyline { line.width: 3; line.color: "#FF4040"; }', mapOsmView)
+    function getCenterOfPolygon(path){
+        var x = 0;
+        var y = 0;
+        var z = 0;
+        var lat1 = 0;
+        var lon1 = 0;
         var numPoints = path.length;
+
         for (var i = 0; i < numPoints; i++) {
-            console.log(path[i]);
-            console.log(path[i].x);
-            console.log(path[i].y);
-            zone.addCoordinate(QtPositioning.coordinate(path[i].x, path[i].y));
-        }
-        mapOsmView.addMapItem(zone)
+            var coordinate = QtPositioning.coordinate(path[i].x, path[i].y);
+            lat1 = coordinate.latitude;
+            lon1 = coordinate.longitude;
 
-        zone = Qt.createQmlObject('import QtLocation 5.13; MapPolyline { line.width: 3; line.color: "#FF4040"; }', mapEsriView)
-        numPoints = path.length;
-        for (i = 0; i < numPoints; i++) {
-            console.log(path[i]);
-            console.log(path[i].x);
-            console.log(path[i].y);
-            zone.addCoordinate(QtPositioning.coordinate(path[i].x, path[i].y));
+            lat1 = lat1 * Math.PI/180
+            lon1 = lon1 * Math.PI/180
+            x += Math.cos(lat1) * Math.cos(lon1)
+            y += Math.cos(lat1) * Math.sin(lon1)
+            z += Math.sin(lat1)
         }
-        mapEsriView.addMapItem(zone)
-
-        zone = Qt.createQmlObject('import QtLocation 5.13; MapPolyline { line.width: 3; line.color: "#FF4040"; }', mapMapboxView)
-        numPoints = path.length;
-        for (i = 0; i < numPoints; i++) {
-            console.log(path[i]);
-            console.log(path[i].x);
-            console.log(path[i].y);
-            zone.addCoordinate(QtPositioning.coordinate(path[i].x, path[i].y));
-        }
-        mapMapboxView.addMapItem(zone)
+        var lonCenter = Math.atan2(y, x)
+        var Hyp = Math.sqrt(x * x + y * y)
+        var latCenter = Math.atan2(z, Hyp)
+        latCenter = latCenter * 180/Math.PI
+        lonCenter = lonCenter * 180/Math.PI
+        return QtPositioning.coordinate(latCenter, lonCenter);
     }
 
-    function addMarker(lat, lon, height, type, id) {
-        var component = Qt.createComponent("qrc:/qml/sign.qml");
+    function createPolyline(path, mapParent) {
+        var polyline = Qt.createQmlObject('import QtLocation 5.13; MapPolyline { line.width: 3; line.color: "#00D031"; }', mapParent)
+        var numPoints = path.length;
+
+        for (var i = 0; i < numPoints; i++)
+            polyline.addCoordinate(QtPositioning.coordinate(path[i].x, path[i].y));
+
+        mapParent.addMapItem(polyline)
+    }
+
+    function createLabel(coordinate, nameZone, codeIcao, nameSector, call, func, freq, mapParent) {
+        var component = Qt.createComponent("qrc:/qml/label.qml");
+
         if (component.status === Component.Ready) {
-            var sign = component.createObject(parent);
-            sign.coordinate = QtPositioning.coordinate(lat, lon);
-            sign.heightObstracle = height;
-            sign.type = type;
-            sign.idObstracle = id;
-            mapEsriView.addMapItem(sign);
-        }
-        component = Qt.createComponent("qrc:/qml/sign.qml");
-        if (component.status === Component.Ready) {
-            sign = component.createObject(parent);
-            sign.coordinate = QtPositioning.coordinate(lat, lon);
-            sign.heightObstracle = height;
-            sign.type = type;
-            sign.idObstracle = id;
-            mapOsmView.addMapItem(sign);
-        }
-        component = Qt.createComponent("qrc:/qml/sign.qml");
-        if (component.status === Component.Ready) {
-            sign = component.createObject(parent);
-            sign.coordinate = QtPositioning.coordinate(lat, lon);
-            sign.heightObstracle = height;
-            sign.type = type;
-            sign.idObstracle = id;
-            mapMapboxView.addMapItem(sign);
+            var label = component.createObject(parent);
+            label.coordinate = coordinate;
+            label.nameZone = nameZone
+            label.codeIcao = codeIcao;
+            label.nameSector = nameSector;
+            label.call = call;
+            label.func = func;
+            label.freq = freq;
+            mapParent.addMapItem(label);
         }
     }
 
-    function drawRadius(radius) {
-        var circle = mapCircleComponent.createObject(mapOsmView, {"center" : mapOsmView.center, "radius": radius * 1000});
-        mapOsmView.addMapItem(circle);
-        circle = mapCircleComponent.createObject(mapEsriView, {"center" : mapEsriView.center, "radius": radius * 1000});
-        mapEsriView.addMapItem(circle);
-        circle = mapCircleComponent.createObject(mapMapboxView, {"center" : mapMapboxView.center, "radius": radius * 1000});
-        mapMapboxView.addMapItem(circle);
+    function displayZone(path, nameZone, codeIcao, nameSector, call, func, freq) {
+        createPolyline(path, mapOsmView);
+        createPolyline(path, mapEsriView);
+        createPolyline(path, mapMapboxView);
+
+        var coordinate = getCenterOfPolygon(path);
+        setLabelOfZone(coordinate, nameZone, codeIcao, nameSector, call, func, freq);
+
+//        polyline = Qt.createQmlObject('import QtLocation 5.13; MapPolyline { line.width: 3; line.color: "#FF4040"; }', mapEsriView)
+////        var zoneBorder = Qt.createQmlObject('import QtLocation 5.13; MapPolyline { line.width: 1; line.color: "#42E712"; }', mapEsriView)
+//        numPoints = path.length;
+//        for (i = 0; i < numPoints; i++) {
+//            polyline.addCoordinate(QtPositioning.coordinate(path[i].x, path[i].y));
+////            zoneBorder.addCoordinate(QtPositioning.coordinate(path[i].x, path[i].y));
+//        }
+//        mapEsriView.addMapItem(polyline)
+////        mapEsriView.addMapItem(zoneBorder)
+
     }
+
+    function setLabelOfZone(coordinate, nameZone, codeIcao, nameSector, call, func, freq) {
+        createLabel(coordinate, nameZone, codeIcao, nameSector, call, func, freq, mapOsmView);
+        createLabel(coordinate, nameZone, codeIcao, nameSector, call, func, freq, mapEsriView);
+        createLabel(coordinate, nameZone, codeIcao, nameSector, call, func, freq, mapMapboxView);
+    }
+
+//    function drawRadius(radius) {
+//        var circle = mapCircleComponent.createObject(mapOsmView, {"center" : mapOsmView.center, "radius": radius * 1000});
+//        mapOsmView.addMapItem(circle);
+//        circle = mapCircleComponent.createObject(mapEsriView, {"center" : mapEsriView.center, "radius": radius * 1000});
+//        mapEsriView.addMapItem(circle);
+//        circle = mapCircleComponent.createObject(mapMapboxView, {"center" : mapMapboxView.center, "radius": radius * 1000});
+//        mapMapboxView.addMapItem(circle);
+//    }
 }

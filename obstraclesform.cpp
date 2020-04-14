@@ -363,60 +363,60 @@ QVariantList ObstraclesForm::getCheckedObstralcles()
 
 void ObstraclesForm::showObstracles(QVariant coordinate, QVariant radius)
 {
-    if (mapView == nullptr) {
-        mapView = new MapView;
-        connect(mapView, SIGNAL(checked(bool, QString)), this, SLOT(setChecked(bool, QString)));
-    }
-    mapView->clearMap();
+//    if (mapView == nullptr) {
+//        mapView = new MapView;
+//        connect(mapView, SIGNAL(checked(bool, QString)), this, SLOT(setChecked(bool, QString)));
+//    }
+//    mapView->clearMap();
 
-    QPointF centerMap = coordinate.toPointF();
-    for (int row = 0; row < sortSearchFilterObstracleModel->rowCount(); row++) {
-        if (sortSearchFilterObstracleModel->index(row, 0).data(Qt::CheckStateRole).toBool()) {
-            ObstraclePoint obstraclePoint;
-            if (sortSearchFilterObstracleModel->index(row, 6).data().isValid() && sortSearchFilterObstracleModel->index(row, 7).data().isValid()) {
-                obstraclePoint.lat = Helper::convertCoordinateInDec(sortSearchFilterObstracleModel->index(row, 6).data(Qt::DisplayRole).toString());
-                obstraclePoint.lon = Helper::convertCoordinateInDec(sortSearchFilterObstracleModel->index(row, 7).data(Qt::DisplayRole).toString());
-            }
-            else {
-                obstraclePoint.lat = Helper::convertCoordinateInDec(sortSearchFilterObstracleModel->index(row, 8).data(Qt::DisplayRole).toString());
-                obstraclePoint.lon = Helper::convertCoordinateInDec(sortSearchFilterObstracleModel->index(row, 9).data(Qt::DisplayRole).toString());
-            }
-            obstraclePoint.height = sortSearchFilterObstracleModel->index(row, 12).data(Qt::DisplayRole).toString();
-            if (sortSearchFilterObstracleModel->index(row, 2).data(Qt::DisplayRole).toString().contains("Естественное препятствие"))
-                obstraclePoint.type = ObstraclePoint::NATURAL;
-            else if (sortSearchFilterObstracleModel->index(row, 6).data().isValid() && sortSearchFilterObstracleModel->index(row, 7).data().isValid()) {
-                if (sortSearchFilterObstracleModel->index(row, 17).data(Qt::DisplayRole).toString().contains(QRegExp("1")) ||
-                        sortSearchFilterObstracleModel->index(row, 20).data(Qt::DisplayRole).toString().contains(QRegExp("1")))
-                    obstraclePoint.type = ObstraclePoint::ARTIFICIAL_MARKING;
-                else
-                    obstraclePoint.type = ObstraclePoint::ARTIFICIAL;
-            }
-            else if (sortSearchFilterObstracleModel->index(row, 8).data().isValid() && sortSearchFilterObstracleModel->index(row, 9).data().isValid()) {
-                obstraclePoint.type = ObstraclePoint::GROUP;
-            }
-            // if point is AD or PP
-            if (sortSearchFilterObstracleModel->index(row, 2).data().toString().contains(QRegExp("^KTA$"))) {
-                qDebug() << "KTA";
-                obstraclePoint.type = ObstraclePoint::KTA;
-                obstraclePoint.height = QString();
-            }
+//    QPointF centerMap = coordinate.toPointF();
+//    for (int row = 0; row < sortSearchFilterObstracleModel->rowCount(); row++) {
+//        if (sortSearchFilterObstracleModel->index(row, 0).data(Qt::CheckStateRole).toBool()) {
+//            ObstraclePoint obstraclePoint;
+//            if (sortSearchFilterObstracleModel->index(row, 6).data().isValid() && sortSearchFilterObstracleModel->index(row, 7).data().isValid()) {
+//                obstraclePoint.lat = Helper::convertCoordinateInDec(sortSearchFilterObstracleModel->index(row, 6).data(Qt::DisplayRole).toString());
+//                obstraclePoint.lon = Helper::convertCoordinateInDec(sortSearchFilterObstracleModel->index(row, 7).data(Qt::DisplayRole).toString());
+//            }
+//            else {
+//                obstraclePoint.lat = Helper::convertCoordinateInDec(sortSearchFilterObstracleModel->index(row, 8).data(Qt::DisplayRole).toString());
+//                obstraclePoint.lon = Helper::convertCoordinateInDec(sortSearchFilterObstracleModel->index(row, 9).data(Qt::DisplayRole).toString());
+//            }
+//            obstraclePoint.height = sortSearchFilterObstracleModel->index(row, 12).data(Qt::DisplayRole).toString();
+//            if (sortSearchFilterObstracleModel->index(row, 2).data(Qt::DisplayRole).toString().contains("Естественное препятствие"))
+//                obstraclePoint.type = ObstraclePoint::NATURAL;
+//            else if (sortSearchFilterObstracleModel->index(row, 6).data().isValid() && sortSearchFilterObstracleModel->index(row, 7).data().isValid()) {
+//                if (sortSearchFilterObstracleModel->index(row, 17).data(Qt::DisplayRole).toString().contains(QRegExp("1")) ||
+//                        sortSearchFilterObstracleModel->index(row, 20).data(Qt::DisplayRole).toString().contains(QRegExp("1")))
+//                    obstraclePoint.type = ObstraclePoint::ARTIFICIAL_MARKING;
+//                else
+//                    obstraclePoint.type = ObstraclePoint::ARTIFICIAL;
+//            }
+//            else if (sortSearchFilterObstracleModel->index(row, 8).data().isValid() && sortSearchFilterObstracleModel->index(row, 9).data().isValid()) {
+//                obstraclePoint.type = ObstraclePoint::GROUP;
+//            }
+//            // if point is AD or PP
+//            if (sortSearchFilterObstracleModel->index(row, 2).data().toString().contains(QRegExp("^KTA$"))) {
+//                qDebug() << "KTA";
+//                obstraclePoint.type = ObstraclePoint::KTA;
+//                obstraclePoint.height = QString();
+//            }
 
-            obstraclePoint.id = sortSearchFilterObstracleModel->index(row, 1).data(Qt::DisplayRole).toString();
-            mapView->addObstracle(obstraclePoint);
+//            obstraclePoint.id = sortSearchFilterObstracleModel->index(row, 1).data(Qt::DisplayRole).toString();
+//            mapView->addObstracle(obstraclePoint);
 
-            if (coordinate.toPointF().isNull()) {
-                centerMap = QPointF(obstraclePoint.lat, obstraclePoint.lon);
-            }
-        }
-    }
-    setCheckedAllRowTable();
-    mapView->setCenter(centerMap);
-    mapView->setRadius(radius);
-    if (centerMap.isNull()) {
-        QMessageBox::warning(this, tr("Warning"), tr("You must select the obstacles displayed in the table!"));
-        return;
-    }
-    mapView->show();
+//            if (coordinate.toPointF().isNull()) {
+//                centerMap = QPointF(obstraclePoint.lat, obstraclePoint.lon);
+//            }
+//        }
+//    }
+//    setCheckedAllRowTable();
+//    mapView->setCenter(centerMap);
+//    mapView->setRadius(radius);
+//    if (centerMap.isNull()) {
+//        QMessageBox::warning(this, tr("Warning"), tr("You must select the obstacles displayed in the table!"));
+//        return;
+//    }
+//    mapView->show();
 }
 
 void ObstraclesForm::updateStatusSelectedObstracles()
