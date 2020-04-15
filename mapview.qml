@@ -201,7 +201,7 @@ Item {
     }
 
     function createPolyline(path, mapParent) {
-        var polyline = Qt.createQmlObject('import QtLocation 5.13; MapPolyline { line.width: 3; line.color: "#00D031"; }', mapParent)
+        var polyline = Qt.createQmlObject('import QtLocation 5.13; MapPolyline { line.width: 4; line.color: "#00D031"; }', mapParent)
         var numPoints = path.length;
 
         for (var i = 0; i < numPoints; i++)

@@ -166,37 +166,42 @@
         <translation type="vanished">ControlZones</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="25"/>
+        <location filename="mainwindow.cpp" line="28"/>
         <source>*</source>
         <translation>*</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="25"/>
+        <location filename="mainwindow.cpp" line="28"/>
         <source>Name</source>
         <translation>Наименование</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="25"/>
+        <location filename="mainwindow.cpp" line="28"/>
         <source>Name sector</source>
         <translation>Наименование сектора</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="32"/>
+        <location filename="mainwindow.cpp" line="35"/>
         <source>Export</source>
         <translation>Экспорт</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="38"/>
+        <location filename="mainwindow.cpp" line="41"/>
         <source>Unhide</source>
         <translation>Отобразить</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="43"/>
+        <location filename="mainwindow.cpp" line="46"/>
         <source>Settings</source>
         <translation>Настройки</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="197"/>
+        <location filename="mainwindow.cpp" line="52"/>
+        <source>Search...</source>
+        <translation>Поиск...</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="220"/>
         <source>Save file</source>
         <translation>Сохранить файл</translation>
     </message>
@@ -487,14 +492,12 @@
         <translation type="vanished">Отмена</translation>
     </message>
     <message>
-        <location filename="obstraclesform.cpp" line="416"/>
         <source>Warning</source>
-        <translation>Предупреждение</translation>
+        <translation type="vanished">Предупреждение</translation>
     </message>
     <message>
-        <location filename="obstraclesform.cpp" line="416"/>
         <source>You must select the obstacles displayed in the table!</source>
-        <translation>Необходимо выбрать препятствия, отображаемые в таблице!</translation>
+        <translation type="vanished">Необходимо выбрать препятствия, отображаемые в таблице!</translation>
     </message>
     <message>
         <source>Information</source>
