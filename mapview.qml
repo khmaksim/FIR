@@ -201,13 +201,34 @@ Item {
     }
 
     function createPolyline(path, mapParent) {
-        var polyline = Qt.createQmlObject('import QtLocation 5.13; MapPolyline { line.width: 4; line.color: "#00D031"; }', mapParent)
+//        var polyline = Qt.createQmlObject('import QtLocation 5.13; MapPolyline { line.width: 4; line.color: "#00D031"; }', mapParent)
         var numPoints = path.length;
 
-        for (var i = 0; i < numPoints; i++)
-            polyline.addCoordinate(QtPositioning.coordinate(path[i].x, path[i].y));
+        var endcurvesItem;
+//        for (var i = 0; i < numPoints; i++)
+//            polyline.addCoordinate(QtPositioning.coordinate(path[i].x, path[i].y));
+//        for(var i = 0; i < numPoints - 1; i++) {
+            var pt1 = Qt.point(10, 20);// mapParent.fromCoordinate(QtPositioning.coordinate(path[i].x, path[i].y), true);//gridCoordinatesList[i])
+            var pt2 = Qt.point(30, 40);//mapParent.fromCoordinate(QtPositioning.coordinate(path[i+1].x, path[i+1].y), true);//gridCoordinatesList[i+1])
 
-        mapParent.addMapItem(polyline)
+            console.log(pt1 + ' ' + pt2);
+
+            var component = Qt.createComponent("CurveLine.qml");
+            if (component.status === Component.Ready) {
+                endcurvesItem = component.createObject(parent);
+                endcurvesItem._width = Math.abs(pt2.x - pt1.x)
+                endcurvesItem._height = Math.abs(pt2.y - pt1.y)
+                endcurvesItem.x1 = pt1.x
+                endcurvesItem.y1 = pt1.y
+                endcurvesItem.x2 = pt2.x
+                endcurvesItem.y2 = pt2.y
+//                endcurvesItem.coordinate = QtPositioning.coordinate(path[i].x, path[i].y)
+
+            }
+            endcurvesItem.callPaint()
+            mapParent.addMapItem(endcurvesItem)
+//        }
+//        mapParent.addMapItem(polyline)
     }
 
     function createLabel(coordinate, nameZone, codeIcao, nameSector, call, func, freq, mapParent) {
