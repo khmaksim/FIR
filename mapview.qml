@@ -174,31 +174,52 @@ Item {
     }
 
     function getCenterOfPolygon(path){
-        var x = 0;
-        var y = 0;
-        var z = 0;
-        var lat1 = 0;
-        var lon1 = 0;
         var numPoints = path.length;
+        var centerX = 0;
+        var centerY = 0;
+        var a = 0;
 
-        for (var i = 0; i < numPoints; i++) {
-            var coordinate = QtPositioning.coordinate(path[i].x, path[i].y);
-            lat1 = coordinate.latitude;
-            lon1 = coordinate.longitude;
+        for (var i = 0; i < numPoints - 1; i++) {
+            var point1 = QtPositioning.coordToMercator(QtPositioning.coordinate(path[i].x, path[i].y));
+            var point2 = QtPositioning.coordToMercator(QtPositioning.coordinate(path[i + 1].x, path[i + 1].y));
 
-            lat1 = lat1 * Math.PI/180
-            lon1 = lon1 * Math.PI/180
-            x += Math.cos(lat1) * Math.cos(lon1)
-            y += Math.cos(lat1) * Math.sin(lon1)
-            z += Math.sin(lat1)
+            centerX += (point1.x + point2.x) * (point1.x * point2.y - point2.x * point1.y)
+            centerY += (point1.y + point2.y) * (point1.x * point2.y - point2.x * point1.y)
+            a += (point1.x * point2.y - point2.x * point1.y)
         }
-        var lonCenter = Math.atan2(y, x)
-        var Hyp = Math.sqrt(x * x + y * y)
-        var latCenter = Math.atan2(z, Hyp)
-        latCenter = latCenter * 180/Math.PI
-        lonCenter = lonCenter * 180/Math.PI
-        return QtPositioning.coordinate(latCenter, lonCenter);
+        centerX = centerX * (1 / (6 * (a * 0.5)))
+        centerY = centerY * (1 / (6 * (a * 0.5)))
+
+        return QtPositioning.mercatorToCoord(Qt.point(centerX, centerY));
     }
+
+    // Other bad method
+//    function getCenterOfPolygon(path){
+//        var x = 0;
+//        var y = 0;
+//        var z = 0;
+//        var lat1 = 0;
+//        var lon1 = 0;
+//        var numPoints = path.length;
+
+//        for (var i = 0; i < numPoints - 1; i++) {
+//            var coordinate = QtPositioning.coordinate(path[i].x, path[i].y);
+//            lat1 = coordinate.latitude;
+//            lon1 = coordinate.longitude;
+
+//            lat1 = lat1 * Math.PI/180
+//            lon1 = lon1 * Math.PI/180
+//            x += Math.cos(lat1) * Math.cos(lon1)
+//            y += Math.cos(lat1) * Math.sin(lon1)
+//            z += Math.sin(lat1)
+//        }
+//        var lonCenter = Math.atan2(y, x)
+//        var Hyp = Math.sqrt(x * x + y * y)
+//        var latCenter = Math.atan2(z, Hyp)
+//        latCenter = latCenter * 180/Math.PI
+//        lonCenter = lonCenter * 180/Math.PI
+//        return QtPositioning.coordinate(latCenter, lonCenter);
+//    }
 
     function createPolyline(path, mapParent) {
         var polyline = Qt.createQmlObject('import QtLocation 5.13; MapPolyline { line.width: 4; line.color: "#00D031"; }', mapParent)
