@@ -1,5 +1,5 @@
 import QtQuick 2.0
-import QtLocation 5.14
+import QtLocation 5.13
 
 MapQuickItem {
     property string nameZone: ""
