@@ -346,7 +346,7 @@ Sub ProcessIndividualElem(inElem as MbeElement)
                 End If
           
                 if Left$(etext,10)="Масштаб: 1" then
-                mdstring= Mid$(etext,12,1)
+                mdstring= Mid$(etext,12)
                         'MbeMessageBox "SCALE:"+mdstring'
                         mapScale=Val(mdstring)
                 End If
@@ -590,7 +590,8 @@ Sub Main
     Loop 
          
     prjNameD=prjName 
-    mapScaleD=Str$(mapScale) 
+    mapScale = mapScale / 100000
+    mapScaleD=Str$(mapScale)
     drLat1cD=drLat1c
     drLat2cD=drLat2c
     coordSysD=coordSys
@@ -605,14 +606,14 @@ Sub Main
     drCLat#=LatToRad(ARINCtoRNCLat(drCLatc))
     drCLon#=LonToRad(ARINCtoRNCLon(drCLonc))
 
-    Dim s$(1 to 3)
-    Dim scale As Integer
-    s$(1) = "3"
-    s$(2) = "5"
-    s$(3) = "10"
-
-    scale = MbeSelectBox("Please enter a scale:", s$, "Enter a scale")
-    mapScale = Val(s$(scale))
+    'Dim s$(1 to 3)
+    'Dim scale As Integer
+    's$(1) = "3"
+    's$(2) = "5"
+    's$(3) = "10"
+    MbeMessageBox mapScaleD
+    'scale = MbeSelectBox("Please enter a scale:", s$, "Enter a scale")
+    'mapScale = Val(s$(scale))
 
     C = (AA-BB)/AA
     E2=fnE2
